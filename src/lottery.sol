@@ -5,8 +5,6 @@ contract Lottery {
     address public lotteryOrganizer;
     uint public prizeFund;
     uint public constant minimalTicketPrice = 0.5 ether;
-    uint8 public constant lotteryOrganizersFeePrecentage = 10;
-    uint public lotteryOrganizerBalance;
 
     //declare an object-like participant structure
     struct Participant {
@@ -25,49 +23,46 @@ contract Lottery {
         lotteryOrganizer = msg.sender;
     }
 
-    //adding new participants and receiving additional amounts to participants and organizer balances
-    receive() external payable {
+    //adding new participants and receiving additional values to existing participant lots
+    function enterLottery() external payable {
         //check whether sender is lotteryOrganizer (they cannot participate)
-        if(msg.sender == lotteryOrganizer) {
+        require(msg.sender != lotteryOrganizer, "Lottery organizer is not allowed to participate.");
 
-            //if yes - add value to lotteryOrganizerBalance
-            lotteryOrganizerBalance += msg.value;        
-        } else {
+        //check whether the sender has already been added to participants[]
+        bool isParticipantExists = false;
+        for (uint256 i = 0; i < participants.length; i++) {
+            if(participants[i].participantAddress == msg.sender){
 
-            //if no - check whether the sender has already been added to participants[]
-            bool isParticipantExists = false;
-            for (uint256 i = 0; i < participants.length; i++) {
-                if(participants[i].participantAddress == msg.sender){
+                //if yes - add msg.value to participant's amountSent
+                participants[i].amountSent += msg.value;
 
-                    //if yes - add msg.value to participant's amountSent
-                    participants[i].amountSent += msg.value;
+                //update the flag's value
+                isParticipantExists = true;
 
-                    //update the flag's value
-                    isParticipantExists = true;
-
-                    //and value to prizeFund
-                    prizeFund += msg.value;
-
-                    //exit the loop
-                    break;
-                }
-            }
-
-            //in case of a new participant
-            if (!isParticipantExists) {
-                //verify the minimal price is paid
-                require(msg.value >= minimalTicketPrice,
-                    "Transferred value is not enough to participate in the lottery. Check for public constant minimalTicketPrice."
-                );
-
-                //and if so - add a new participant
-                Participant memory newParticipant = Participant(payable (msg.sender), msg.value); // create a new participant convertins their address into a payable one
-                participants.push(newParticipant);// push it to the participants[] array
-
-                //add value to prizeFund
+                //and value to prizeFund
                 prizeFund += msg.value;
+
+                //exit the loop
+                break;
             }
-        } 
+        }
+
+        //in case of a new participant
+        if (!isParticipantExists) {
+            
+            //verify the minimal price is paid
+            require(msg.value >= minimalTicketPrice,
+                "Transferred value is not enough to participate in the lottery. Check for public constant minimalTicketPrice."
+            );
+
+            //and if so - add a new participant
+            Participant memory newParticipant = Participant(payable (msg.sender), msg.value); // create a new participant convertins their address into a payable one
+            participants.push(newParticipant);// push it to the participants[] array
+
+            //add value to prizeFund
+            prizeFund += msg.value;
+        }
+         
     }
 
     // Function to pick the address of a random participant
@@ -89,11 +84,6 @@ contract Lottery {
 
         //pick a random one among participants[]
         address payable winner = pickRandomParticipant();
-        
-        //charge prizeFund with lotteryOrganizersFee
-        uint lotteryOrganizerFee = prizeFund * (100 - lotteryOrganizersFeePrecentage);
-        prizeFund -= lotteryOrganizerFee;
-        lotteryOrganizerBalance += lotteryOrganizerFee;
 
         //send prize to the winner
         winner.transfer(prizeFund);
@@ -106,14 +96,5 @@ contract Lottery {
         //clear participants array
         delete participants;
         //now we can conduct another issue of the lottery
-    }
-
-    //let the organizer get their reward
-    function withdrawLotteryOrganizerFee(uint amount, address payable destination) external {
-        require(msg.sender == lotteryOrganizer, "Only the lottery organizer can withdraw.");
-        require(lotteryOrganizerBalance >= amount, "Insufficient lottery organizer balance");
-
-        //send lotteryOrganizerFee to the specified destination
-        destination.transfer(amount);
     }
 }
