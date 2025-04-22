@@ -49,7 +49,7 @@ contract Lottery {
 
         //in case of a new participant
         if (!isParticipantExists) {
-            
+
             //verify the minimal price is paid
             require(msg.value >= minimalTicketPrice,
                 "Transferred value is not enough to participate in the lottery. Check for public constant minimalTicketPrice."
@@ -61,8 +61,7 @@ contract Lottery {
 
             //add value to prizeFund
             prizeFund += msg.value;
-        }
-         
+        }        
     }
 
     // Function to pick the address of a random participant
@@ -93,8 +92,9 @@ contract Lottery {
         participantsTotal += participants.length;
         prizeSentTotal += prizeFund;
 
-        //clear participants array
+        //bringing the lottery to the initial state
         delete participants;
+        prizeFund = 0;
         //now we can conduct another issue of the lottery
     }
 }
