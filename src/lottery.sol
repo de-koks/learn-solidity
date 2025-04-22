@@ -4,14 +4,17 @@ pragma solidity ^0.8.29;
 contract Lottery {
     address public lotteryOrganizer;
     uint public prizeFund;
+    uint public constant minimalTicketPrice = 0.5 ether;
     uint8 public constant lotteryOrganizersFeePrecentage = 10;
     uint public lotteryOrganizerBalance;
 
+    //declare an object-like participant structure
     struct Participant {
         address payable participantAddress;
         uint256 amountSent;
     }
 
+    //declare an array with participants
     Participant[] public participants;
 
     uint public lotteryRoundsTotal;
@@ -22,29 +25,46 @@ contract Lottery {
         lotteryOrganizer = msg.sender;
     }
 
+    //adding new participants and receiving additional amounts to participants and organizer balances
     receive() external payable {
         //check whether sender is lotteryOrganizer (they cannot participate)
         if(msg.sender == lotteryOrganizer) {
+
             //if yes - add value to lotteryOrganizerBalance
             lotteryOrganizerBalance += msg.value;        
         } else {
-            //if no - add value to prizeFund
-            prizeFund += msg.value;
 
-            //and check whether the sender has already been added to participants[]
+            //if no - check whether the sender has already been added to participants[]
             bool isParticipantExists = false;
             for (uint256 i = 0; i < participants.length; i++) {
                 if(participants[i].participantAddress == msg.sender){
+
                     //if yes - add msg.value to participant's amountSent
                     participants[i].amountSent += msg.value;
+
+                    //update the flag's value
                     isParticipantExists = true;
+
+                    //and value to prizeFund
+                    prizeFund += msg.value;
+
+                    //exit the loop
+                    break;
                 }
             }
 
-            //if no - add a new participant
+            //in case of a new participant
             if (!isParticipantExists) {
-                Participant memory newParticipant = Participant(payable (msg.sender), msg.value); // create a new participant with the current value of msg.value and the sender address as its participantAddress
-                participants.push(newParticipant);// push it to the participants[] array so that we can keep track of who has entered
+                //verify the minimal price is paid
+                require(msg.value >= minimalTicketPrice,
+                    "Transferred value is not enough to participate in the lottery. Check for public constant minimalTicketPrice.");
+
+                //and if so - add a new participant
+                Participant memory newParticipant = Participant(payable (msg.sender), msg.value); // create a new participant convertins their address into a payable one
+                participants.push(newParticipant);// push it to the participants[] array
+
+                //add value to prizeFund
+                prizeFund += msg.value;
             }
         } 
     }
@@ -53,11 +73,8 @@ contract Lottery {
         require(msg.sender == lotteryOrganizer, "Only the lottery organizer can launch the lottery.");
         require(participants.length > 2, "Lottery must have at least 3 participants");
 
-        //create a new array by sorting participants[] by amountSent > 0.5ETH
-        
-        
         //pick a random one among participants[]
-        uint256 indexOfRandomParticipant = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty))) % participants.length;
+        uint256 indexOfRandomParticipant = uint256(keccak256(abi.encodePacked(block.timestamp, block.prevrandao))) % participants.length;
         Participant storage winner = participants[indexOfRandomParticipant];  //select a random participant from the participants[] array
         
         //charge prizeFund with lotteryOrganizersFee
