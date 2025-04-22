@@ -57,7 +57,8 @@ contract Lottery {
             if (!isParticipantExists) {
                 //verify the minimal price is paid
                 require(msg.value >= minimalTicketPrice,
-                    "Transferred value is not enough to participate in the lottery. Check for public constant minimalTicketPrice.");
+                    "Transferred value is not enough to participate in the lottery. Check for public constant minimalTicketPrice."
+                );
 
                 //and if so - add a new participant
                 Participant memory newParticipant = Participant(payable (msg.sender), msg.value); // create a new participant convertins their address into a payable one
@@ -69,13 +70,25 @@ contract Lottery {
         } 
     }
 
-    function launchLottery() public {
+    // Function to pick the address of a random participant
+    function pickRandomParticipant() public view returns (address payable) {
+        require(participants.length > 0, "No participants available");
+
+        // Generate pseudorandom number using block data
+        uint256 randomIndex = uint256(
+            keccak256(abi.encodePacked(block.timestamp, block.prevrandao, msg.sender))
+        ) % participants.length;
+
+        // Return the address of the random participant
+        return participants[randomIndex].participantAddress;
+    }
+
+    function launchLottery() external {
         require(msg.sender == lotteryOrganizer, "Only the lottery organizer can launch the lottery.");
         require(participants.length > 2, "Lottery must have at least 3 participants");
 
         //pick a random one among participants[]
-        uint256 indexOfRandomParticipant = uint256(keccak256(abi.encodePacked(block.timestamp, block.prevrandao))) % participants.length;
-        Participant storage winner = participants[indexOfRandomParticipant];  //select a random participant from the participants[] array
+        address payable winner = pickRandomParticipant();
         
         //charge prizeFund with lotteryOrganizersFee
         uint lotteryOrganizerFee = prizeFund * (100 - lotteryOrganizersFeePrecentage);
@@ -83,7 +96,7 @@ contract Lottery {
         lotteryOrganizerBalance += lotteryOrganizerFee;
 
         //send prize to the winner
-        winner.participantAddress.transfer(prizeFund);
+        winner.transfer(prizeFund);
 
         //record the total logs
         lotteryRoundsTotal++; 
