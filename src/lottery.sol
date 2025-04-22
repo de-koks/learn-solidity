@@ -71,7 +71,7 @@ contract Lottery {
     }
 
     // Function to pick the address of a random participant
-    function pickRandomParticipant() public view returns (address payable) {
+    function pickRandomParticipant() internal view returns (address payable) {
         require(participants.length > 0, "No participants available");
 
         // Generate pseudorandom number using block data
