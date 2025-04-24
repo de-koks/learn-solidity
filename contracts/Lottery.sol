@@ -66,7 +66,7 @@ contract Lottery {
 
     // Function to pick the address of a random participant
     function pickRandomParticipant() internal view returns (address payable) {
-        require(participants.length > 0, "No participants available");
+        require(participants.length > 0, "No participants available.");
 
         // Generate pseudorandom number using block data
         uint256 randomIndex = uint256(
@@ -79,7 +79,7 @@ contract Lottery {
 
     function launchLottery() external {
         require(msg.sender == lotteryOrganizer, "Only the lottery organizer can launch the lottery.");
-        require(participants.length > 2, "Lottery must have at least 3 participants");
+        require(participants.length > 2, "Lottery must have at least 3 participants.");
 
         //pick a random one among participants[]
         address payable winner = pickRandomParticipant();
