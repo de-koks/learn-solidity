@@ -1,6 +1,9 @@
 const { expect } = require("chai");
 const hre = require("hardhat");
 
+// Import the helper function
+const { verifyLaunchLottery } = require("./helper/verifyLaunchLottery.js");
+
 describe('Lottery tests', function () {
     let lottery;
     let organizer;
@@ -127,17 +130,31 @@ describe('Lottery tests', function () {
         expect(isParticipant).to.be.true;
     });
 
-    it('launchLottery() should transfer the prize to one of the participants, record the logs, reset participants[] and prizeFund if is called by organizer when there are 3 participants', async function() {
-        // Call launchLottery
-        await lottery.launchLottery();
+    it('launchLottery() should trigger a tx transferring the prize to one of the participants, record the logs, reset participants[] and prizeFund if is called by organizer when there are 3 participants', async function() {
+        // Use the helper function to verify launchLottery for 3 participants
+        await verifyLaunchLottery(lottery, [
+            participant1,
+            participant2,
+            participant3
+        ]);
+    });
 
-        // Check there is a transaction transferring the prize to one of the participants
-        
+    it('launchLottery() should conduct a lottery with 4 participants', async function() {
+        // Add 4 participants
+        await lottery.connect(participant1).enterLottery({ value: ticketPrice });
+        await lottery.connect(participant2).enterLottery({ value: ticketPrice });
+        await lottery.connect(participant3).enterLottery({ value: ticketPrice });
+        await lottery.connect(participant4).enterLottery({ value: ticketPrice });
 
-        // Check that prizeFund is 0
-        expect(await lottery.prizeFund()).to.equal(0);
+        // Verify the number of participants
+        expect(await lottery.participants.length).to.equal(4);
 
-        // Check that participants array is empty
-        expect(await lottery.participants.length).to.equal(0);
+        // Use the helper function to verify launchLottery
+        await verifyLaunchLottery(lottery, [
+            participant1,
+            participant2,
+            participant3,
+            participant4
+        ]);
     });
 });
