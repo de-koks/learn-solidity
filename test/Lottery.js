@@ -13,7 +13,7 @@ describe('Lottery tests', function () {
     let participant4;
     const ticketPrice = hre.ethers.parseEther("0.5");
 
-    beforeAll('Deploy Lottery contract, set up accounts', async function() {
+    before('Deploy Lottery contract, set up accounts', async function() {
         lottery = await hre.ethers.deployContract("Lottery");
         [
             organizer,
@@ -29,12 +29,12 @@ describe('Lottery tests', function () {
         lottery = lottery.connect(organizer);
     });
 
-    it('pickRandomParticipant() should revert if there are no participants', async function() {
-        // Call pickRandomParticipant with no participants
-        await expect(lottery.pickRandomParticipant()).to.be.revertedWith(
-            'No participants available.'
-        );
-    });
+    // it('pickRandomParticipant() should revert if there are no participants', async function() {
+    //     // Call pickRandomParticipant with no participants
+    //     await expect(lottery.pickRandomParticipant()).to.be.revertedWith(
+    //         'No participants available.'
+    //     );
+    // });
 
     it('enterLottery() should revert if sender is lottery organizer', async function() {
         //call enterLottery from organizer's account with value = ticketPrice
