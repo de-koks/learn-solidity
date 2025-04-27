@@ -11,7 +11,7 @@ describe('Lottery tests', function () {
     let participant2;
     let participant3;
     let participant4;
-    const ticketPrice = hre.ethers.utils.parseEther("0.5");
+    const ticketPrice = hre.ethers.parseEther("0.5");
 
     beforeAll('Deploy Lottery contract, set up accounts', async function() {
         lottery = await hre.ethers.deployContract("Lottery");
@@ -46,7 +46,7 @@ describe('Lottery tests', function () {
     it('enterLottery() should revert for a non-organizer with value < ticket price', async function() {
         // Call enterLottery with value < ticketPrice
         await expect(lottery.connect(participant1).enterLottery({
-            value: hre.ethers.utils.parseEther("0.4")
+            value: hre.ethers.parseEther("0.4")
         })).to.be.revertedWith(
             'Transferred value is not enough to participate in the lottery. Check for public constant minimalTicketPrice.'
         );
@@ -74,7 +74,7 @@ describe('Lottery tests', function () {
     it('enterLottery() should replenish the lot of an already participating one', async function () {
         // Call enterLottery as participant1 again
         await lottery.connect(participant1).enterLottery({
-            value: hre.ethers.utils.parseEther("0.4")
+            value: hre.ethers.parseEther("0.4")
         });
 
         // Check address and lot of participants[0]
@@ -84,10 +84,10 @@ describe('Lottery tests', function () {
 
         expect(
             await lottery.participants(0).amountSent
-        ).to.equal(hre.ethers.utils.parseEther("0.9"));
+        ).to.equal(hre.ethers.parseEther("0.9"));
 
         // Check that prizeFund was replenished
-        expect(await lottery.prizeFund()).to.equal(hre.ethers.utils.parseEther("0.9"));
+        expect(await lottery.prizeFund()).to.equal(hre.ethers.parseEther("0.9"));
     });
 
     it('launchLottery() should revert for organizer if there are < 3 participants', async function() {
