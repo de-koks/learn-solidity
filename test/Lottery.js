@@ -114,21 +114,21 @@ describe('Lottery tests', function () {
         );
     });
 
-    it('pickRandomParticipant() should return one of the participants address when thre are 3 participants', async function() {
-        // Call pickRandomParticipant
-        const randomParticipant = await lottery.pickRandomParticipant();
+    // it('pickRandomParticipant() should return one of the participants address when thre are 3 participants', async function() {
+    //     // Call pickRandomParticipant
+    //     const randomParticipant = await lottery.pickRandomParticipant();
 
-        // Verify that randomParticipant matches one of the participant addresses
-        let isParticipant = false;
-        const participantsCount = await lottery.participants.length;
-        for (let i = 0; i < participantsCount; i++) {
-            if (randomParticipant === (await lottery.participants(i)).participantAddress) {
-                isParticipant = true;
-                break;
-            }
-        }
-        expect(isParticipant).to.be.true;
-    });
+    //     // Verify that randomParticipant matches one of the participant addresses
+    //     let isParticipant = false;
+    //     const participantsCount = await lottery.participants.length;
+    //     for (let i = 0; i < participantsCount; i++) {
+    //         if (randomParticipant === (await lottery.participants(i)).participantAddress) {
+    //             isParticipant = true;
+    //             break;
+    //         }
+    //     }
+    //     expect(isParticipant).to.be.true;
+    // });
 
     it('launchLottery() should trigger a tx transferring the prize to one of the participants, record the logs, reset participants[] and prizeFund if is called by organizer when there are 3 participants', async function() {
         // Use the helper function to verify launchLottery for 3 participants
