@@ -29,13 +29,6 @@ describe('Lottery tests', function () {
         lottery = lottery.connect(organizer);
     });
 
-    // it('pickRandomParticipant() should revert if there are no participants', async function() {
-    //     // Call pickRandomParticipant with no participants
-    //     await expect(lottery.pickRandomParticipant()).to.be.revertedWith(
-    //         'No participants available.'
-    //     );
-    // });
-
     it('enterLottery() should revert if sender is lottery organizer', async function() {
         //call enterLottery from organizer's account with value = ticketPrice
         await expect(lottery.enterLottery({
@@ -109,22 +102,6 @@ describe('Lottery tests', function () {
             'Only the lottery organizer can launch the lottery.'
         );
     });
-
-    // it('pickRandomParticipant() should return one of the participants address when thre are 3 participants', async function() {
-    //     // Call pickRandomParticipant
-    //     const randomParticipant = await lottery.pickRandomParticipant();
-
-    //     // Verify that randomParticipant matches one of the participant addresses
-    //     let isParticipant = false;
-    //     const participantsCount = await lottery.participants.length;
-    //     for (let i = 0; i < participantsCount; i++) {
-    //         if (randomParticipant === (await lottery.participants(i)).participantAddress) {
-    //             isParticipant = true;
-    //             break;
-    //         }
-    //     }
-    //     expect(isParticipant).to.be.true;
-    // });
 
     it('launchLottery() should send the prize to one of the participants, record the logs, reset participants[] and prizeFund if is called by organizer when there are 3 participants', async function() {
         // Use the helper function to verify launchLottery for 3 participants
