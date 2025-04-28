@@ -57,14 +57,15 @@ describe('Lottery tests', function () {
         await lottery.connect(participant1).enterLottery({
             value: ticketPrice
         });
-
+        console.log('log the address of the 1st participant');
+        console.log(await lottery.participants[0].address);
         // Verify that address and lot of participants[0] are belong to participant1
         expect(
-            await lottery.participants(0).participantAddress
-        ).to.equal(participant1.address);
+            await lottery.participants[0].participantAddress
+        ).to.equal(await participant1.address);
 
         expect(
-            await lottery.participants(0).amountSent
+            await lottery.participants[0].amountSent
         ).to.equal(ticketPrice);
 
         // Check that prizeFund was replenished
@@ -76,11 +77,11 @@ describe('Lottery tests', function () {
         await lottery.connect(participant1).enterLottery({
             value: hre.ethers.parseEther("0.4")
         });
-
+        console.log(await lottery.participants(0));
         // Check address and lot of participants[0]
         expect(
             await lottery.participants(0).participantAddress
-        ).to.equal(participant1.address);
+        ).to.equal(await participant1.address);
 
         expect(
             await lottery.participants(0).amountSent

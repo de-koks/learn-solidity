@@ -1,3 +1,5 @@
+const { expect } = require("chai");
+
 async function verifyLaunchLottery(lottery, participants) {
     // Save the prizeFund before the lottery is launched
     const prizeFund = await lottery.prizeFund();
@@ -9,6 +11,8 @@ async function verifyLaunchLottery(lottery, participants) {
     expect(tx).to.exist;
     const receipt = await tx.wait(); // Wait for the transaction to be mined
     expect(receipt.status).to.equal(1); // Check that the transaction was successful
+
+    console.log(receipt);
 
     // Check the tx value is equal to prizeFund
     expect(receipt.value).to.equal(prizeFund);
@@ -29,3 +33,5 @@ async function verifyLaunchLottery(lottery, participants) {
     // Check that participants array is reset
     expect(await lottery.participants.length).to.equal(0);
 }
+
+module.exports = { verifyLaunchLottery };
