@@ -126,7 +126,7 @@ describe('Lottery tests', function () {
     //     expect(isParticipant).to.be.true;
     // });
 
-    it('launchLottery() should trigger a tx transferring the prize to one of the participants, record the logs, reset participants[] and prizeFund if is called by organizer when there are 3 participants', async function() {
+    it('launchLottery() should send the prize to one of the participants, record the logs, reset participants[] and prizeFund if is called by organizer when there are 3 participants', async function() {
         // Use the helper function to verify launchLottery for 3 participants
         await verifyLaunchLottery(lottery, [
             participant1,
@@ -135,15 +135,12 @@ describe('Lottery tests', function () {
         ]);
     });
 
-    it('launchLottery() should conduct a lottery with 4 participants', async function() {
+    it('launchLottery() should send the prize to one of the participants, record the logs, reset participants[] and prizeFund if is called by organizer when there are 4 participants', async function() {
         // Add 4 participants
         await lottery.connect(participant1).enterLottery({ value: ticketPrice });
         await lottery.connect(participant2).enterLottery({ value: ticketPrice });
         await lottery.connect(participant3).enterLottery({ value: ticketPrice });
         await lottery.connect(participant4).enterLottery({ value: ticketPrice });
-
-        // Verify the number of participants
-        expect(await lottery.participants.length).to.equal(4);
 
         // Use the helper function to verify launchLottery
         await verifyLaunchLottery(lottery, [

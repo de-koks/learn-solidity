@@ -1,37 +1,63 @@
 const { expect } = require("chai");
+const hre = require("hardhat");
 
 async function verifyLaunchLottery(lottery, participants) {
-    // Save the prizeFund before the lottery is launched
+    // Save the round properties before the lottery is launched
+    const numberOfParticipants = participants.length;
     const prizeFund = await lottery.prizeFund();
+    const lotteryRoundsBefore = await lottery.lotteryRoundsTotal();
+    const participantsBefore = await lottery.participantsTotal();
+    const prizeSentBefore = await lottery.prizeSentTotal();
 
-    // Call the method and capture the transaction object
-    const tx = await lottery.launchLottery();
+    // Create an instance of provider to retrieve balances
+    const provider = hre.ethers.provider;
 
-    // Verify that the transaction object exists and it's mined successfully
-    expect(tx).to.exist;
-    const receipt = await tx.wait(); // Wait for the transaction to be mined
-    expect(receipt.status).to.equal(1); // Check that the transaction was successful
-
-    console.log(receipt);
-
-    // Check the tx value is equal to prizeFund
-    expect(receipt.value).to.equal(prizeFund);
-
-    // Check the tx address is one of the participants
-    let isParticipant = false;
+    // Save the balances of the participant wallets before the lottery is launched
+    const participantWallets = [];
     for (let i = 0; i < participants.length; i++) {
-        if (receipt.to === participants[i].address) {
-            isParticipant = true;
+        
+        // Need to save the participant to address it as an object 
+        const currentParticipant = await lottery.participants(i);
+        const currentAddress = currentParticipant.participantAddress; // Get the participant's address
+        participantWallets.push(await provider.getBalance(currentAddress)); // Use provider to get balance
+    }
+
+    // Launch the lottery
+    await lottery.launchLottery();
+
+    // Verify that one of the participants got their balance increased by the prizeFund value
+    let winnerFound = false;
+    for (let i = 0; i < participants.length; i++) {
+        // Get the participant's address
+        const participantAddress = participants[i].address;
+
+        // Get the new balance of the participant
+        const newBalance = await provider.getBalance(participantAddress);
+
+        if (newBalance > participantWallets[i]) {
+            // If winner was found, check that their balance increased exactly by the prizeFund value
+            expect(newBalance - participantWallets[i]).to.equal(prizeFund);
+            winnerFound = true;
             break;
         }
     }
-    expect(isParticipant).to.be.true;
+
+    // Check that the winner was found
+    expect(winnerFound).to.be.true;
 
     // Check that prizeFund is reset to 0
     expect(await lottery.prizeFund()).to.equal(0);
 
     // Check that participants array is reset
     expect(await lottery.participants.length).to.equal(0);
+
+    // Check that logs were recorded
+    const lotteryRoundsAfter = await lottery.lotteryRoundsTotal();
+    const participantsAfter = await lottery.participantsTotal();
+    const prizeSentAfter = await lottery.prizeSentTotal();
+    expect(lotteryRoundsAfter).to.equal(lotteryRoundsBefore + BigInt(1));
+    expect(participantsAfter).to.equal(participantsBefore + BigInt(numberOfParticipants));
+    expect(prizeSentAfter).to.equal(prizeSentBefore + prizeFund);
 }
 
 module.exports = { verifyLaunchLottery };
