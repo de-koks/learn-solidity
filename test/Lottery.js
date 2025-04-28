@@ -57,35 +57,30 @@ describe('Lottery tests', function () {
         await lottery.connect(participant1).enterLottery({
             value: ticketPrice
         });
-        console.log('log the address of the 1st participant');
-        console.log(await lottery.participants[0].address);
-        // Verify that address and lot of participants[0] are belong to participant1
-        expect(
-            await lottery.participants[0].participantAddress
-        ).to.equal(await participant1.address);
 
-        expect(
-            await lottery.participants[0].amountSent
-        ).to.equal(ticketPrice);
+        // Need to save the participant to address it as an object 
+        const firstParticipant = await lottery.participants(0);
+
+        // Check address and lot of participants[0]
+        expect(firstParticipant.participantAddress).to.equal(await participant1.address);
+        expect(firstParticipant.amountSent).to.equal(ticketPrice);
 
         // Check that prizeFund was replenished
         expect(await lottery.prizeFund()).to.equal(ticketPrice);
     });
 
     it('enterLottery() should replenish the lot of an already participating one', async function () {
-        // Call enterLottery as participant1 again
+        // Call enterLottery as participant1 again with value = 0.4 ETH
         await lottery.connect(participant1).enterLottery({
             value: hre.ethers.parseEther("0.4")
         });
-        console.log(await lottery.participants(0));
-        // Check address and lot of participants[0]
-        expect(
-            await lottery.participants(0).participantAddress
-        ).to.equal(await participant1.address);
 
-        expect(
-            await lottery.participants(0).amountSent
-        ).to.equal(hre.ethers.parseEther("0.9"));
+        // Need to save the participant to address it as an object 
+        const firstParticipant = await lottery.participants(0);
+
+        // Check address and lot of participants[0]
+        expect(firstParticipant.participantAddress).to.equal(await participant1.address);
+        expect(firstParticipant.amountSent).to.equal(hre.ethers.parseEther("0.9"));
 
         // Check that prizeFund was replenished
         expect(await lottery.prizeFund()).to.equal(hre.ethers.parseEther("0.9"));
