@@ -9,7 +9,8 @@ import {Ownable} from "@openzeppelin/contracts@5.3.0/access/Ownable.sol";
 
 contract TooNumerousToken is ERC721, ERC721Enumerable, ERC721Pausable, Ownable {
     uint256 private _nextTokenId;
-
+    uint256 public constant MINT_PRICE = 0.01 ether;
+    
     constructor(address initialOwner)
         ERC721("TooNumerousToken", "TNT")
         Ownable(initialOwner)
