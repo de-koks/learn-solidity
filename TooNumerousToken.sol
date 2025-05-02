@@ -37,6 +37,11 @@ contract TooNumerousToken is ERC721, ERC721Enumerable, ERC721Pausable, Ownable {
         return tokenId;
     }
 
+    function withdraw() public onlyOwner() {
+        require(address(this).balance > 0, "Balance is zero.");
+        payable (owner()).transfer(address(this).balance);
+    }
+
     // The following functions are overrides required by Solidity.
 
     function _update(address to, uint256 tokenId, address auth)
