@@ -30,7 +30,7 @@ contract TooNumerousToken is ERC721, ERC721Enumerable, ERC721Pausable, Ownable {
 
     function safeMint(address to) public payable returns (uint256) {
         require(msg.value >= MINT_PRICE, "Not enough ETH is sent.");
-        uint256 tokenId = _nextTokenId++;
+        uint256 tokenId = ++_nextTokenId;
         _safeMint(to, tokenId);
         return tokenId;
     }
