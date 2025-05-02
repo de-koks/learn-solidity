@@ -10,7 +10,7 @@ import {Ownable} from "@openzeppelin/contracts@5.3.0/access/Ownable.sol";
 contract TooNumerousToken is ERC721, ERC721Enumerable, ERC721Pausable, Ownable {
     uint256 private _nextTokenId;
     uint256 public constant MINT_PRICE = 0.01 ether;
-    
+
     constructor(address initialOwner)
         ERC721("TooNumerousToken", "TNT")
         Ownable(initialOwner)
@@ -28,7 +28,8 @@ contract TooNumerousToken is ERC721, ERC721Enumerable, ERC721Pausable, Ownable {
         _unpause();
     }
 
-    function safeMint(address to) public returns (uint256) {
+    function safeMint(address to) public payable returns (uint256) {
+        require(msg.value >= MINT_PRICE, "Not enough ETH is sent.");
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
         return tokenId;
