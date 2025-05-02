@@ -18,7 +18,7 @@ contract TooNumerousToken is ERC721, ERC721Enumerable, ERC721Pausable, Ownable {
     {}
 
     function _baseURI() internal pure override returns (string memory) {
-        return "ipfs://tooNumerousTokenURI";
+        return "ipfs://tooNumerousTokenURI/";
     }
 
     function pause() public onlyOwner {
