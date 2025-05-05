@@ -1,3 +1,9 @@
 /.deps
 /src/artifacts/
 /.states/
+/node_modules
+/.vscode
+/artifacts
+/cache
+/coverage
+coverage.json
