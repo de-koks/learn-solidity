@@ -1,1 +1,7 @@
 /.deps
+/node_modules
+/.vscode
+/artifacts
+/cache
+/coverage
+coverage.json
