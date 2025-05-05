@@ -1,11 +1,14 @@
-# learn-solidity repo
+# Learn Solidity Repository
 
-Content:
-# lottery branch
-contains a Solidity smart contract implementing a lottery.
+This repository contains a couple of Solidity smart contracts and unit tests implemented using the Hardhat framework.
 
-# hardhat-tests-lottery branch
-contains JavaScript unit tests that are implemented on the Hardhat framework to cover the lottery functionality.
+## Branches Overview
 
-# nft branch
-contains a Solidity contract implementing a simple NFT collection.
+### `lottery` Branch
+This branch contains a Solidity smart contract implementing a lottery.
+
+### `hardhat-tests-lottery` Branch
+This branch contains JavaScript unit tests implemented using the Hardhat framework to cover the functionality of the lottery contract.
+
+### `nft` Branch
+This branch contains a Solidity smart contract implementing a simple NFT collection.
