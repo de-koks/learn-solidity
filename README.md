@@ -5,10 +5,13 @@ This repository contains a couple of Solidity smart contracts and unit tests imp
 ## Branches Overview
 
 ### `lottery` Branch
-This branch contains a Solidity smart contract implementing a lottery.
+contains a Solidity smart contract implementing a lottery.
 
 ### `hardhat-tests-lottery` Branch
-This branch contains JavaScript unit tests implemented using the Hardhat framework to cover the functionality of the lottery contract.
+contains JavaScript unit tests implemented using the Hardhat framework to cover the functionality of the Solidity lottery contract.
 
 ### `nft` Branch
-This branch contains a Solidity smart contract implementing a simple NFT collection.
+contains a Solidity smart contract implementing a simple NFT collection.
+
+### `hyperledger-contract` Branch
+contains a smart contract implemented with JavaScript to use in a Hyperledger blockchain. 
