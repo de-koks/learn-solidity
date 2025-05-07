@@ -1,6 +1,6 @@
 # Learn Solidity Repository
 
-This repository contains a couple of Solidity smart contracts and unit tests implemented using the Hardhat framework.
+This repository contains smart contracts and tests to verify contract functionality.
 
 ## Branches Overview
 
@@ -14,4 +14,7 @@ contains JavaScript unit tests implemented using the Hardhat framework to cover 
 contains a Solidity smart contract implementing a simple NFT collection.
 
 ### `hyperledger-contract` Branch
-contains a smart contract implemented with JavaScript to use in a Hyperledger blockchain. 
+contains a smart contract implemented with JavaScript to use in a Hyperledger blockchain.
+
+### `hyperledger-api-tests` Branch
+contains API tests to verify the functionality of the lottery.ts deployed to a hyperledger blockchain.
