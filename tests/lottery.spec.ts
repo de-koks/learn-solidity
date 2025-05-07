@@ -1,10 +1,9 @@
 import { test, expect } from '@playwright/test';
+import dotenv from 'dotenv';
+import path from 'path';
 
-const OWNER = 'user1';
-const PLAYER1 = 'player1';
-const PLAYER2 = 'player2';
-const PLAYER3 = 'player3';
-const PLAYER4 = 'player4';
+// Load environment variables from the .env file
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 test.beforeAll(async ({ request }) => {
     // Call the method initializing a new lottery
@@ -12,9 +11,9 @@ test.beforeAll(async ({ request }) => {
       data: {
         "headers": {
             "type": "SendTransaction",
-            "signer": OWNER,
-            "channel": "default-channel",
-            "chaincode": "lottery",
+            "signer": process.env.OWNER,
+            "channel": process.env.DEFAULT_CHANNEL,
+            "chaincode": process.env.LOTTERY,
           },
           "func": "initLottery",
           "args": [
@@ -31,9 +30,9 @@ test('lottery should be in the initial state', async ({ request}) => {
     const isInitialState = await request.post('/query', {
         data: {
             "headers": {
-                "signer": OWNER,
-                "channel": "default-channel",
-                "chaincode": "lottery"
+                "signer": process.env.OWNER,
+                "channel": process.env.DEFAULT_CHANNEL,
+                "chaincode": process.env.LOTTERY
             },
             "func": "getIsInitialState",
             "args": [
