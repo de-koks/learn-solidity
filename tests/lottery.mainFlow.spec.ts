@@ -82,4 +82,27 @@ test.describe('Scenario to verify adding players and picking a winner', () => {
             ])
         }));
     });
+
+    test('isInitialState should be false', async ({ request}) => {
+        const isInitialState = await request.post('/query', {
+            data: {
+                "headers": {
+                    "signer": process.env.OWNER,
+                    "channel": process.env.DEFAULT_CHANNEL,
+                    "chaincode": process.env.LOTTERY
+                },
+                "func": "getIsInitialState",
+                "args": [],
+                "strongread": true
+            }
+        });
+        expect(isInitialState.ok()).toBeTruthy();
+
+        const responseJson = await isInitialState.json();
+        expect(responseJson).toEqual(expect.objectContaining({
+            result: expect.objectContaining({
+                isInitialState: false
+            })
+        }));
+    });
 });
