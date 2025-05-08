@@ -26,7 +26,7 @@ test.beforeAll(async ({ request }) => {
     expect(response.ok()).toBeTruthy();
 });
 
-test.describe('Checks for the initial state of the lottery', () => {
+test.describe('Verify the lottery initial state and getters', () => {
     test('should return the owner', async ({ request}) => {
         const getOwner = await request.post('/query', {
             data: {
