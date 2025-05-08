@@ -23,12 +23,39 @@ test.beforeAll(async ({ request }) => {
           "init": false
         }
     });
-
     expect(response.ok()).toBeTruthy();
 });
 
 test.describe('Checks for the initial state of the lottery', () => {
-    test('isInitialState flag should be true in the initial state', async ({ request}) => {
+    test('should return the owner', async ({ request}) => {
+        const getOwner = await request.post('/query', {
+            data: {
+                "headers": {
+                    "signer": process.env.OWNER,
+                    "channel": process.env.DEFAULT_CHANNEL,
+                    "chaincode": process.env.LOTTERY
+                },
+                "func": "getOwner",
+                "args": [],
+                "strongread": true
+            }
+        });
+        expect(getOwner.ok()).toBeTruthy();
+
+        // Parse the JSON response
+        const responseJson = await getOwner.json();
+
+        if (!process.env.OWNER) {
+            throw new Error('process.env.OWNER is not defined in the environment variables');
+        }      
+        expect(responseJson).toEqual(expect.objectContaining({
+            result: expect.objectContaining({
+                owner: expect.stringContaining(process.env.OWNER)
+            })
+        }));
+    });
+
+    test('isInitialState flag should be true', async ({ request}) => {
         const isInitialState = await request.post('/query', {
             data: {
                 "headers": {
@@ -41,7 +68,6 @@ test.describe('Checks for the initial state of the lottery', () => {
                 "strongread": true
             }
         });
-
         expect(isInitialState.ok()).toBeTruthy();
 
         // Parse the JSON response
@@ -55,7 +81,53 @@ test.describe('Checks for the initial state of the lottery', () => {
         }));
     });
 
-    test('check the initial minimal amount ot enter', async ({ request}) => {
+    test('prizePool should be zero', async ({ request}) => {
+        const prizePool = await request.post('/query', {
+            data: {
+                "headers": {
+                    "signer": process.env.OWNER,
+                    "channel": process.env.DEFAULT_CHANNEL,
+                    "chaincode": process.env.LOTTERY
+                },
+                "func": "getPrizePool",
+                "args": [],
+                "strongread": true
+            }
+        });
+        expect(prizePool.ok()).toBeTruthy();
+
+        const responseJson = await prizePool.json();
+        expect(responseJson).toEqual(expect.objectContaining({
+            result: 0
+        }));
+    });
+
+    test('lottery statistics should be zero', async ({ request}) => {
+        const lotteryStats = await request.post('/query', {
+            data: {
+                "headers": {
+                    "signer": process.env.OWNER,
+                    "channel": process.env.DEFAULT_CHANNEL,
+                    "chaincode": process.env.LOTTERY
+                },
+                "func": "getLotteryStats",
+                "args": [],
+                "strongread": true
+            }
+        });
+        expect(lotteryStats.ok()).toBeTruthy();
+
+        const responseJson = await lotteryStats.json();
+        expect(responseJson).toEqual(expect.objectContaining({
+            result: expect.objectContaining({
+                lotteryRoundsTotal: 0,
+                participantsTotal: 0,
+                prizeSentTotal: 0
+            })
+        }));
+    });
+
+    test('minimalAmountToEnter should have the initial value', async ({ request}) => {
         const minimalAmountToEnter = await request.post('/query', {
             data: {
                 "headers": {
@@ -68,11 +140,9 @@ test.describe('Checks for the initial state of the lottery', () => {
                 "strongread": true
             }
         });
-
         expect(minimalAmountToEnter.ok()).toBeTruthy();
 
         const responseJson = await minimalAmountToEnter.json();
-
         expect(responseJson).toEqual(expect.objectContaining({
             result: (() => {
                 if (!process.env.MINIMAL_AMOUNT_TO_ENTER) {
@@ -83,7 +153,7 @@ test.describe('Checks for the initial state of the lottery', () => {
         }));
     });
 
-    test('check the initial minimal number of players', async ({ request}) => {
+    test('minimalPlayersNumber should have the initial value', async ({ request}) => {
         const getMinimalPlayersNumber = await request.post('/query', {
             data: {
                 "headers": {
@@ -96,11 +166,9 @@ test.describe('Checks for the initial state of the lottery', () => {
                 "strongread": true
             }
         });
-
         expect(getMinimalPlayersNumber.ok()).toBeTruthy();
 
         const responseJson = await getMinimalPlayersNumber.json();
-
         expect(responseJson).toEqual(expect.objectContaining({
             result: (() => {
                 if (!process.env.MINIMAL_NUMBER_OF_PLAYERS) {
@@ -111,7 +179,7 @@ test.describe('Checks for the initial state of the lottery', () => {
         }));
     });
 
-    test('should be no players initially', async ({ request}) => {
+    test('should be no players', async ({ request}) => {
         const getPlayers = await request.post('/query', {
             data: {
                 "headers": {
@@ -124,11 +192,9 @@ test.describe('Checks for the initial state of the lottery', () => {
                 "strongread": true
             }
         });
-
         expect(getPlayers.ok()).toBeTruthy();
 
         const responseJson = await getPlayers.json();
-
         expect(responseJson).toEqual(expect.objectContaining({
             result: []
         }));
