@@ -6,7 +6,6 @@ import path from 'path';
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 const updatedMinimalAmountToEnter = 50;
-const updatedMinimalNumberOfPlayers = 2;
 
 test.beforeAll(async ({ request }) => {
     // Call the method initializing a new lottery
@@ -26,38 +25,35 @@ test.beforeAll(async ({ request }) => {
             "init": false
         }
     });
-
     expect(response.ok()).toBeTruthy();
 });
 
 test.describe('Negative checks for enterLottery()', () => {    
-    test('should reject the owner', async ({ request}) => {
+    test('should reject the owner', async ({ request }) => {
         const rejectOwner = await request.post('/transactions', {
             data: {
-            "headers": {
-                "type": "SendTransaction",
-                "signer": process.env.OWNER,
-                "channel": process.env.DEFAULT_CHANNEL,
-                "chaincode": process.env.LOTTERY,
+                "headers": {
+                    "type": "SendTransaction",
+                    "signer": process.env.OWNER,
+                    "channel": process.env.DEFAULT_CHANNEL,
+                    "chaincode": process.env.LOTTERY,
                 },
                 "func": "enterLottery",
                 "args": [
-                process.env.MINIMAL_AMOUNT_TO_ENTER
+                    process.env.MINIMAL_AMOUNT_TO_ENTER
                 ],
                 "init": false
             }
         });
-
         expect(rejectOwner.status()).toBe(500);
 
         const responseJson = await rejectOwner.json();
-
         expect(responseJson.error).toEqual(
             expect.stringContaining('The owner cannot enter the lottery.')
         );
     });
 
-    test('should reject a player with insufficient amount', async ({ request}) => {
+    test('should reject a player with insufficient amount', async ({ request }) => {
         if (!process.env.MINIMAL_AMOUNT_TO_ENTER) {
             throw new Error('MINIMAL_AMOUNT_TO_ENTER is not defined in the environment variables');
         }
@@ -65,37 +61,35 @@ test.describe('Negative checks for enterLottery()', () => {
         
         const rejectPlayer = await request.post('/transactions', {
             data: {
-            "headers": {
-                "type": "SendTransaction",
-                "signer": process.env.PLAYER1,
-                "channel": process.env.DEFAULT_CHANNEL,
-                "chaincode": process.env.LOTTERY,
+                "headers": {
+                    "type": "SendTransaction",
+                    "signer": process.env.PLAYER1,
+                    "channel": process.env.DEFAULT_CHANNEL,
+                    "chaincode": process.env.LOTTERY,
                 },
                 "func": "enterLottery",
                 "args": [
-                insufficienAmount.toString()
+                    insufficienAmount.toString()
                 ],
                 "init": false
             }
         });
-
         expect(rejectPlayer.status()).toBe(500);
 
         const responseJson = await rejectPlayer.json();
-
         expect(responseJson.error).toEqual(
             expect.stringContaining(`Entry amount must be at least ${process.env.MINIMAL_AMOUNT_TO_ENTER}`)
         );
     });
 
-    test('should reject a player with NaN amount', async ({ request}) => {        
+    test('should reject a player with NaN amount', async ({ request }) => {        
         const rejectPlayer = await request.post('/transactions', {
             data: {
-            "headers": {
-                "type": "SendTransaction",
-                "signer": process.env.PLAYER1,
-                "channel": process.env.DEFAULT_CHANNEL,
-                "chaincode": process.env.LOTTERY,
+                "headers": {
+                    "type": "SendTransaction",
+                    "signer": process.env.PLAYER1,
+                    "channel": process.env.DEFAULT_CHANNEL,
+                    "chaincode": process.env.LOTTERY,
                 },
                 "func": "enterLottery",
                 "args": [
@@ -104,11 +98,9 @@ test.describe('Negative checks for enterLottery()', () => {
                 "init": false
             }
         });
-
         expect(rejectPlayer.status()).toBe(500);
 
         const responseJson = await rejectPlayer.json();
-
         expect(responseJson.error).toEqual(
             expect.stringContaining('Invalid entry amount')
         );
@@ -116,7 +108,7 @@ test.describe('Negative checks for enterLottery()', () => {
 });
 
 test.describe('Negative checks for updateLotteryConfig()', () => {
-    test('should reject when called by non-owner', async ({ request}) => {
+    test('should reject when called by non-owner', async ({ request }) => {
         const rejectUpdateLotteryConfig = await request.post('/transactions', {
             data: {
                 "headers": {
@@ -141,7 +133,7 @@ test.describe('Negative checks for updateLotteryConfig()', () => {
         );
     });
 
-    test('should reject when wrong config parameter key is provided', async ({ request}) => {
+    test('should reject when wrong config parameter key is provided', async ({ request }) => {
         const rejectUpdateLotteryConfig = await request.post('/transactions', {
             data: {
                 "headers": {
@@ -166,7 +158,7 @@ test.describe('Negative checks for updateLotteryConfig()', () => {
         );
     });
 
-    test('should reject when config parameter value is NaN', async ({ request}) => {
+    test('should reject when config parameter value is NaN', async ({ request }) => {
         const rejectUpdateLotteryConfig = await request.post('/transactions', {
             data: {
                 "headers": {
@@ -191,7 +183,7 @@ test.describe('Negative checks for updateLotteryConfig()', () => {
         );
     });
 
-    test('should reject when config parameter value is zero', async ({ request}) => {
+    test('should reject when config parameter value is zero', async ({ request }) => {
         const rejectUpdateLotteryConfig = await request.post('/transactions', {
             data: {
                 "headers": {
@@ -216,7 +208,7 @@ test.describe('Negative checks for updateLotteryConfig()', () => {
         );
     });
 
-    test('should reject when isInitialState == false', async ({ request}) => {
+    test('should reject when isInitialState == false', async ({ request }) => {
         // Add a player to turn isInitialState to false
         const addPlayer1 = await request.post('/transactions', {
             data: {
@@ -233,7 +225,6 @@ test.describe('Negative checks for updateLotteryConfig()', () => {
                 "init": false
             }
         });
-
         expect(addPlayer1.ok()).toBeTruthy();
         
         const rejectUpdateLotteryConfig = await request.post('/transactions', {
@@ -262,7 +253,7 @@ test.describe('Negative checks for updateLotteryConfig()', () => {
 });
 
 test.describe('Negative checks for pickWinner()', () => {
-    test('should reject when called by non-owner', async ({ request}) => {
+    test('should reject when called by non-owner', async ({ request }) => {
         const rejectPickWinner = await request.post('/transactions', {
             data: {
                 "headers": {
@@ -284,7 +275,7 @@ test.describe('Negative checks for pickWinner()', () => {
         );
     });
 
-    test('should reject whennumber of players is less than minimalPlayersNumber', async ({ request}) => {
+    test('should reject when current number of players is less than minimalPlayersNumber', async ({ request }) => {
         const rejectPickWinner = await request.post('/transactions', {
             data: {
                 "headers": {

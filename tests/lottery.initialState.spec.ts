@@ -27,7 +27,7 @@ test.beforeAll(async ({ request }) => {
 });
 
 test.describe('Verify the lottery initial state and getters', () => {
-    test('should return the owner', async ({ request}) => {
+    test('should return the owner', async ({ request }) => {
         const getOwner = await request.post('/query', {
             data: {
                 "headers": {
@@ -55,7 +55,7 @@ test.describe('Verify the lottery initial state and getters', () => {
         }));
     });
 
-    test('isInitialState flag should be true', async ({ request}) => {
+    test('isInitialState flag should be true', async ({ request }) => {
         const isInitialState = await request.post('/query', {
             data: {
                 "headers": {
@@ -81,7 +81,7 @@ test.describe('Verify the lottery initial state and getters', () => {
         }));
     });
 
-    test('prizePool should be zero', async ({ request}) => {
+    test('prizePool should be zero', async ({ request }) => {
         const prizePool = await request.post('/query', {
             data: {
                 "headers": {
@@ -102,7 +102,7 @@ test.describe('Verify the lottery initial state and getters', () => {
         }));
     });
 
-    test('lottery statistics should be zero', async ({ request}) => {
+    test('lottery statistics should be zero', async ({ request }) => {
         const lotteryStats = await request.post('/query', {
             data: {
                 "headers": {
@@ -127,7 +127,7 @@ test.describe('Verify the lottery initial state and getters', () => {
         }));
     });
 
-    test('minimalAmountToEnter should have the initial value', async ({ request}) => {
+    test('minimalAmountToEnter should have the initial value', async ({ request }) => {
         const minimalAmountToEnter = await request.post('/query', {
             data: {
                 "headers": {
@@ -153,7 +153,7 @@ test.describe('Verify the lottery initial state and getters', () => {
         }));
     });
 
-    test('minimalPlayersNumber should have the initial value', async ({ request}) => {
+    test('minimalPlayersNumber should have the initial value', async ({ request }) => {
         const getMinimalPlayersNumber = await request.post('/query', {
             data: {
                 "headers": {
@@ -179,7 +179,7 @@ test.describe('Verify the lottery initial state and getters', () => {
         }));
     });
 
-    test('should be no players', async ({ request}) => {
+    test('should be no players', async ({ request }) => {
         const getPlayers = await request.post('/query', {
             data: {
                 "headers": {

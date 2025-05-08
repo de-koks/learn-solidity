@@ -29,7 +29,7 @@ test.beforeAll(async ({ request }) => {
 
 
 test.describe('Scenario to verify adding players and picking a winner', () => {
-    test('should add a player with minimal amount', async ({ request}) => {
+    test('should add a player with minimal amount', async ({ request }) => {
         // add player1
         const addPlayer1 = await request.post('/transactions', {
             data: {
@@ -83,7 +83,7 @@ test.describe('Scenario to verify adding players and picking a winner', () => {
         }));
     });
 
-    test('isInitialState should be false', async ({ request}) => {
+    test('isInitialState should be false', async ({ request }) => {
         const isInitialState = await request.post('/query', {
             data: {
                 "headers": {
