@@ -62,19 +62,22 @@ test.describe('Scenario to verify adding players and picking a winner', () => {
                 "strongread": true
             }
         });
-
         expect(getPlayers.ok()).toBeTruthy();
 
-        const responseJson = await getPlayers.json();
-
         // Verify that the response contains player1 with minimal amount
+        const responseJson = await getPlayers.json();
         expect(responseJson).toEqual(expect.objectContaining({
             result: expect.arrayContaining([
                 expect.objectContaining({
-                    playerId: expect.stringContaining("player1"),
+                    playerId: (() => {
+                        if (!process.env.PLAYER1) {
+                            throw new Error('PLAYER1 is not defined in the environment variables');
+                        }
+                        return expect.stringContaining(process.env.PLAYER1);
+                    })(),
                     amount: (() => {
                         if (!process.env.MINIMAL_AMOUNT_TO_ENTER) {
-                            throw new Error('MINIMAL_NUMBER_OF_PLAYERS is not defined in the environment variables');
+                            throw new Error('MINIMAL_AMOUNT_TO_ENTER is not defined in the environment variables');
                         }
                         return parseInt(process.env.MINIMAL_AMOUNT_TO_ENTER, 10);
                     })()
