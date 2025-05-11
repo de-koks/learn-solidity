@@ -1,8 +1,8 @@
 /*
-    * this code is deployed on Hyperledger Fabric network
-    * to create API tests for the smart contract
-    * it is not used in the current repository
-    * thus IDE warnings are ignored
+    * This smart contract is deployed on a Hyperledger Fabric network
+    * to cover it with API tests.
+    * It is not used in the current repository
+    * thus IDE warnings are ignored.
 */
 
 import { Context, Contract, Info, Returns, Transaction } from 'fabric-contract-api';
