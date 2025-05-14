@@ -10,3 +10,4 @@ coverage.json
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+/mochawesome-report/
