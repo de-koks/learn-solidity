@@ -1,31 +1,34 @@
 /**
- * Sends an HTTP request using axios to the specified URL with the given method, headers, and body.
+ * Sends an HTTP request using axios to the specified endpoint.
+ *
+ * Logs the request method and URL as:
+ *   Request: { method, url, params }
+ * and logs the response code and body as:
+ *   Response: { code, body }
  *
  * @async
  * @function sendRequest
  * @param {string} URL - The endpoint path to append to the BASE_URL.
  * @param {string} [method="get"] - The HTTP method to use (e.g., "get", "post", "put", "delete").
- * @param {Object} headers - Additional headers to include in the request.
- * @param {Object|null} [body=null] - The request payload for methods like POST or PUT.
+ * @param {Object|null} [params=null] - Query parameters to include in the request (for GET or similar methods).
  * @returns {Promise<{status: number, data: any}>} An object containing the HTTP status code and response data.
  */
 const { default: axios } = require("axios")
 const { BASE_URL } = require("../config/endpoints")
 
 
-const sendRequest = async (URL, method = "get", headers, body = null) => {
+const sendRequest = async (URL, method = "get", params = null) => {
     const fullUrl = `${BASE_URL}${URL}`;
     try {
-        console.log('Request:', { method: method.toUpperCase(), url: fullUrl });
+        console.log('Request:', { method: method.toUpperCase(), url: fullUrl, params: params });
         const response = await axios({
             url: fullUrl,
             method: method,
             headers: {
-                ...headers,
                 "accept": "application/json",
                 "Authorization": `Basic ${process.env.KALEIDO_API_KEY}`,
             },
-            data: body,
+            params: params,
         });
         console.log('Response:', { code: response.status, body: response.data });
         return {
