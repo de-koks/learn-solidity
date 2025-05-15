@@ -18,3 +18,6 @@ contains a smart contract implemented with JavaScript to use in a Hyperledger bl
 
 ### `hyperledger-api-tests` Branch
 contains API tests implemented with TypeSript and Playwright to verify the functionality of the lottery.ts deployed to a hyperledger blockchain.
+
+### `private-ethereum-api-tests` Branch
+contains API tests implemented with JavaSript, mocha, chai, axios to verify the functionality of the lottery.sol smart contract deployed to a private ethereum blockchain.
